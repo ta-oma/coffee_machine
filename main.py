@@ -73,6 +73,11 @@ def process_transaction(money_received, drink_cost):
         print("Sorry, not enough money!")
 
 
+def process_ingredients(resource, drink_ingredients):
+    for item in drink_ingredients:
+        resources['item'] -= drink['ingredients']
+
+
 isMachineOn = True
 
 while isMachineOn:
@@ -85,4 +90,5 @@ while isMachineOn:
     else:
         drink = MENU[choice]
         if is_resource_available(drink['ingredients']):
-            process_transaction(process_coins(),drink['cost'])
+            process_transaction(process_coins(), drink['cost'])
+            process_ingredients(resources, drink['ingredients'])

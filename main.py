@@ -32,11 +32,6 @@ resources = {
 
 profit = 0
 
-p = 0.01
-n = 0.05
-d = 0.10
-q = 0.25
-
 
 def report_print():
     print(f"Water:{resources['water']}ml")
@@ -45,36 +40,49 @@ def report_print():
     print(f"Money:${profit}")
 
 
+def is_resource_available(drink_ingredients):
+    """Returns whether a drink can be made or not given ingredients and resources"""
+    for item in drink_ingredients:
+        if drink_ingredients[item] >= resources[item]:
+            print(f"Sorry there's not enough {item} !")
+            return False;
+    return True;
+
+
+def process_coins():
+    """Returns calculated coins inserted"""
+    money_received = 0;
+    inserted_quarter = int(input("How many quarters?"))
+    inserted_dime = int(input("How many dimes?"))
+    inserted_nickel = int(input("How many nickels?"))
+    inserted_penny = int(input("How many pennies?"))
+    money_received = (inserted_quarter * 0.25) + (inserted_dime * 0.10) + (inserted_nickel * 0.05) + \
+                     (inserted_penny * 0.01)
+    return money_received
+
+
+def process_transaction(money_received, drink_cost):
+    if money_received >= drink_cost:
+        global profit
+        profit += drink_cost
+        change = round(money_received - drink_cost, 2)
+        print("Here is your drink! ☕ Enjoy!")
+        if change != 0:
+            print(f"And here is your change of ${change}.")
+    else:
+        print("Sorry, not enough money!")
+
+
 isMachineOn = True
 
 while isMachineOn:
     choice = input("Please select a beverage(espresso,latte,cappuccino):")
-    if choice == "espresso":
-        if resources['water'] >= 50 and resources['coffee'] >= 18:
-            inserted_quarter = float(input("How many quarters?"))
-            inserted_dime = float(input("How many dimes?"))
-            inserted_nickel = float(input("How many nickels?"))
-            inserted_penny = float(input("How many pennies?"))
-            total_inserted = (inserted_quarter * q) + (inserted_dime * d) + (inserted_nickel * n) + (inserted_penny * p)
-            if total_inserted == 1.5:
-                profit = +1.5
-                resources['water'] -= 50
-                resources['coffee'] -= 18
-                print("Here is your espresso! ☕ Enjoy!")
-            if total_inserted > 1.5:
-                print("Here is your espresso! ☕ Enjoy!")
-                resources['water'] -= 50
-                resources['coffee'] -= 18
-                change = total_inserted - 1.5
-                profit += 1.5
-                # TODO: Fix change decimal places
-                print("And here's your change of " + str(change) + "!")
-            else:
-                print("Not enough money! Get outta here you bozo!")
-        else:
-            print("Not enough resources!")
     if choice == "report":
         report_print()
-    if choice == "off":
+    elif choice == "off":
         print("Shutting down...")
         isMachineOn = False
+    else:
+        drink = MENU[choice]
+        if is_resource_available(drink['ingredients']):
+            process_transaction(process_coins(),drink['cost'])
